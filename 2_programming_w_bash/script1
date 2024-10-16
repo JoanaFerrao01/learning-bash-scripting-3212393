@@ -1,0 +1,360 @@
+#!/usr/bin/env bash
+echo "hello"
+
+#this is a comment
+echo "there"
+
+#make it executable by:
+#chmod +x script1
+
+# --------------------------------------------------
+# echo --- use of quotes
+#no quotes - echo will try interpret things as it finds them
+# echo hello world outputs `hello world`
+
+# given varname=world
+# echo hello $(varname) outputs `hello world`
+
+# echo hello (world) however will confuse bash and will output `-bash: syntax error near unexpected token `(' ` 
+#for that we must use the escape sequence \, like:
+# echo hello \(world\) 
+# that will output `hello (world)`
+
+
+# single quotes '' - echo will treat everything inside them as a string literal
+#   echo 'the kernel is $(uname -r)' will ouput `the kernel is $(uname -r)`
+
+# double quotes '' - echo will interpret string with substitutions, evaluations, variables, etc.
+
+
+# each echo command will end with a new line, unless it is used with the no new line flag "-n"
+
+#echo -n "hello world" will not end with a new line
+
+# --------------------------------------------------
+echo; #echo w/out args will just print a new line 
+echo "line1"; echo "line2";
+echo -n "part of "; echo "a stament."
+echo
+
+# variables
+#CANNOT have spaces btween the = and the values, like greeting = hello!
+greeting=hello # 1 word can ignore quotes
+long_greeting="hello everyone" # 2+ words need quotes
+number=2
+
+echo $long_greeting .. $number 
+
+variable="im a variable"
+echo "variable: $variable"
+variable="i can change values"
+echo "variable: $variable"
+echo
+
+# -r flag: read-only
+declare -r constant="i am a constant (aka read-only!)"
+echo "constant: $constant"
+
+constant="i cannot change" 
+echo "constant: $constant (after trying to change it)"
+echo
+
+# -l flag: lowercase!
+declare -l lowerstring="I AM A LOWER STRING"
+echo "lowerstring: $lowerstring"
+lowerstring="I AM A LOWER STRING WITH SOME MORE TEXT"
+echo "lowerstring: $lowerstring"
+
+# -u flag: uppercase!
+declare -u upperstring="i am a upper string"
+echo "upperstring: $upperstring"
+upperstring="i am a upper string with some more text"
+echo "upperstring: $upperstring"
+
+changing_string="i am a changing string"
+declare -u changing_string
+echo "changing string: $changing_string"
+declare -l changing_string
+echo "changing string: $changing_string"
+
+#declare -p to see the list of declarations
+
+echo
+
+# arithmetic..
+#..expansion $(()) returns result of mathematical operations
+
+#.. evaluation (()) performs calculations and changes the value of variables
+
+#supported operations:
+# addition:         +
+# subtraction :     -
+# multiplication:   *
+# division:         /
+# module:           %
+# exponentiation:   **
+
+echo "4+4=$((4+4))"
+echo "4-4=$((4-4))"
+echo "4*4=$((4*4))"
+echo "4/4=$((4/4))"
+echo "4%4=$((4%4))"
+echo "4**4=$((4**4))"
+echo
+
+x=3
+echo "x=$x"
+((x+=3))
+echo "((x+=3)) ..."
+echo "x=$x"
+((x++))
+echo "((x++)) ..."
+echo "x=$x"
+((x--))
+echo "((x--)) ..."
+echo "x=$x"
+
+# important: add the (()) or else
+echo
+echo "no parentisis..."
+x+=3
+echo "x+=3 ..."
+echo "x=$x"
+
+x++
+echo "x++ ..."
+echo "x=$x"
+echo
+
+#also dont use $!
+echo "using \$x..."
+(($x++))
+echo "((\$x++)) ..."
+echo "x=$x"
+echo
+
+echo "x=$x"
+((x+=2))
+echo "((x+=2)) = $x"
+((x-=2))
+echo "((x-=2)) = $x"
+((x*=2))
+echo "((x*=2)) = $x"
+((x/=2))
+echo "((x/=2)) = $x"
+
+echo
+
+echo "unexpected results:"
+y=5
+echo "y=$y"
+y=$y+2
+echo "((y=y+2)) .."
+echo "y=$y"
+echo
+
+# -i flag: integer!
+
+declare -i y=5 
+echo "declared y as an integer..."
+echo "y=$y"
+((y=$y-4))
+echo "((y=y-4)) .."
+echo "y=$y"
+echo
+
+
+((y/=3))
+echo "((y/=3)) .."
+echo "y=$y"
+echo
+echo "bash only suports integers...we can fix this with bc!"
+echo
+
+
+# learning bc / awk
+# bc : basic calculations
+#had to install bc, maybe not pre installed
+
+declare -i c=1
+declare -i d=3
+echo "bc <- c/d, with precision of 3 decimal places"
+e=$(echo "scale=3; $c/$d" | bc) #sends "scale=3; 1/3" into bc
+#pipes into bc the calculation c/d, with a scale of precision of 3 decimal places
+
+echo $e
+echo
+
+echo "random values :\$RANDOM"
+for i in {0..10}
+do
+    echo -n "$RANDOM; "
+done
+echo; echo 
+
+echo "random values from 1 to 10:\$((1 + RANDOM % 10))"
+for i in {0..10}
+do
+    echo -n "$((1+$RANDOM%10)); "
+done
+echo;echo 
+echo
+
+## self learning
+testAnswerAsString(){
+if [ $? -eq 0 ]; then
+    echo yes
+else 
+    echo no 
+fi
+}
+
+testAnswerAsStringV2(){
+[ $? -eq 0 ] && echo yes
+[ ! $? -eq 0 ] && echo no
+
+}
+## -------------
+
+
+#test [] 
+# returns 0/1 depending on the eval of the expression
+#0: sucess / 1: failure
+
+#to see results: echo $?
+echo "0: yes / 1: no"; echo
+echo -n "is $HOME a directory? "
+[ -d ~ ]
+echo $?
+
+echo -n "is bash a directory? "
+[ -d /bin/bash ] ; testAnswerAsString 
+
+#help test for more condition checks
+
+echo -n "is cat = dog? "
+[ "cat" = "dog" ] ; testAnswerAsString
+
+echo -n "is cat = cat? "
+[ "cat" = "cat" ] ; testAnswerAsString 
+
+echo -n "is 4 less than 5? "
+[ 4 -lt 5 ] ; testAnswerAsString  
+
+echo -n "is 4 less than 3? "
+[ 4 -lt 3 ] ; testAnswerAsString  
+
+echo -n "is it FALSE that 4 less than 3? "
+[ ! 4 -lt 3 ] ; testAnswerAsString  
+echo;
+
+
+# extended test [[]]
+# same as test but more functionalities!
+
+echo -n "is 4 less than 3? "
+[[ 4 -lt 3 ]] ; testAnswerAsString  
+
+echo -n "is 4 less than 3 AND less than 5? "
+[[ 4 -lt 3 && 4 -lt 5 ]] ; testAnswerAsString  
+
+echo -n "is 4 less than 3 OR less than 5? "
+[[ 4 -lt 3 || 4 -lt 5 ]] ; testAnswerAsString  
+
+echo;
+
+# this way, it prints only if condition is true!
+[[ -d ~ ]] && echo ~ is a directory
+[[ -d /bin/bash ]] && echo bash is a directory
+
+echo;
+echo "ls: "
+ls && echo "listed the directory" #if the command completes (ls), then it prints the statment!
+
+#regex! params:
+# [[ string to check =~ regex ]] 
+echo -n "does the word \"cat\" start with the letter c? "
+[[ "cat" =~ c.* ]]; testAnswerAsStringV2
+echo -n "does the word \"cat\" start with the letter C? "
+[[ "cat" =~ C.* ]]; testAnswerAsStringV2
+echo
+
+#echo enhanced text
+# -e flag : echo interprets characters like \t, \n, \a ...
+
+echo -e "Name\t\Age"; 
+echo -e "Joana\t\t22"; echo
+echo -e "This text\nbreaks over\nthree lines."
+echo -e "DING! \a"
+
+echo;
+
+#text formating:
+# \033 : means what comes next are text formating instructions
+# [ number1;number2m : numbers indicating the background (1) and foreground/text (2) colors
+
+#colors:
+# Color         FG      BG
+#-------------------------
+# black:        30      40
+# red:          31      41
+# green:        32      42
+# yellow:       33      43
+# blue:         34      44
+# magenta:      35      45
+# cyan:         36      46
+# white:        37      47
+#-------------------------
+# bright black:        90      100
+# bright red:          91      101
+# bright green:        92      102
+# bright yellow:       93      103
+# bright blue:         94      104
+# bright magenta:      95      105
+# bright cyan:         96      106
+# bright white:        97      107
+
+# styles!
+# reset             0
+# bright            1
+# dim               2
+# italic            3
+# underlined        4
+# blinking          5
+# inverted          7
+# strikethrough     9
+
+echo -e "\033[33;44mColor Text\033[0m"
+echo -e "\033[30;42mColor Text\033[0m"
+echo -e "\033[41;105mColor Text"
+echo "some text that shouldn't have styling"
+echo -e "\033[0m"
+# this has formating bc the text before did not close with "\003[0m" !
+
+echo "some text that shouldn't have styling"
+# this is okay bc the text b4 closed!
+
+echo -e "\033[4;31;40mERROR:\033[0m\033[31;40m Something went wrong.\033[0m"
+echo
+
+echo "TEXT COLORS -"
+echo -e "\033[30;47m Black on white! \033[0m"
+echo -e "\033[37;40m White on Black! \033[0m"
+echo -e "\033[31;42m Red on Green! \033[0m"
+echo -e "\033[32;41m Green on Red! \033[0m"
+echo -e "\033[33;44m Yellow on Blue! \033[0m"
+echo -e "\033[34;43m Blue on Yellow! \033[0m"
+echo -e "\033[35;46m Magenta on Cyan! \033[0m"
+echo -e  "\033[36;45m Cyan on Magenta! \033[0m"
+echo
+
+echo "TEXT STYLES -"
+echo -e "\033[0;37;40m Reset! aka none \033[0m"
+echo -e "\033[1;37;40m Bright! \033[0m"
+echo -e "\033[2;37;40m Dim! \033[0m"
+echo -e "\033[3;37;40m Italic! \033[0m"
+echo -e "\033[4;37;40m Underlined! \033[0m"
+echo -e "\033[5;37;40m Blinking! \033[0m"
+echo -e "\033[7;37;40m Inverted! \033[0m"
+echo -e "\033[9;37;40m Strikethrough! \033[0m"
+
