@@ -210,10 +210,10 @@ fi
 }
 
 testAnswerAsStringV2(){
-[ $? -eq 0 ] && echo yes
+[ $? -eq 0 ] && echo yes 
 [ ! $? -eq 0 ] && echo no
-
 }
+
 ## -------------
 
 
@@ -358,3 +358,92 @@ echo -e "\033[5;37;40m Blinking! \033[0m"
 echo -e "\033[7;37;40m Inverted! \033[0m"
 echo -e "\033[9;37;40m Strikethrough! \033[0m"
 
+#or!!!! clean:
+ulinered="\033[4;37;40m"
+red="\033[31;40m"
+none="\033[0m"
+
+echo -e $ulinered"ERROR:"$none$red" Something went wrong."$none
+
+echo
+#printf
+# bit cleaner 
+
+#compare
+echo "The results are: $(( 2 + 2 )) and $(( 3 / 1 ))"
+#and
+printf "The results are %d and %d\n" $(( 2 + 2 )) $(( 3 / 1 ))
+
+#from programing background, printf is more intuitive imo
+echo
+printf "The result is: %d \n" $(( 2 + 3 )) $(( 3 / 1 )) $(( 2 ** 2 ))
+#if we put more values than placeholder, it will print the number of times as there as plc. holders!
+echo
+
+echo "alignment formats"
+
+echo;echo "Right-aligned text and digits"
+echo "----10----|--5--"
+printf "%10s:%5d\n" "A Label" 123 "B Label" 456
+
+echo;echo "Left-aligned text, right-aligned digits"
+echo "----10----|--5--"
+printf "%-10s:%5d\n" "A Label" 123 "B Label" 456
+
+echo;echo "Right-aligned text, left-aligned digits"
+echo "----10----|--5--"
+printf "%10s:%-5d\n" "A Label" 123 "B Label" 456
+
+echo;echo "Left-aligned text and digits"
+echo "----10----|--5--"
+printf "%-10s:%-5d\n" "A Label" 123 "B Label" 456
+
+echo;echo "Left-aligned text, right-aligned and padded digits"
+echo "----10----|--5--"
+printf "%-10s:%05d\n" "A Label" 123 "B Label" 456
+
+echo; echo "dates formates"
+
+printf "%(%Y-%m-%d %H:%M:%S)T\n" 1658179558 #(this is a random epoch time)
+
+date +%s #current epoch time
+date +%Y-%m-%d\ %H:%M:%S #current epoch time - formated version
+
+printf "%(%Y-%m-%d %H:%M:%S)T\n" $(date +%s)
+printf "%(%Y-%m-%d %H:%M:%S)T\n"
+#works the same: default w/o param is current time
+
+printf "%(%Y-%m-%d %H:%M:%S)T is %s\n" -1 "the time"
+#can use -1 as the value so the format isnt confused by missing value 
+
+echo;
+
+#arrays!
+#bash supports indexed and associative arrays
+
+#indexed array
+snacks=("yogurt" "pear" "tangerine" "cookies") #implicitly declared
+
+declare -a snacks=("yogurt" "pear" "tangerine" "cookies") #explicitly declared as array
+
+echo "snacks!"
+echo - ${snacks[0]}
+echo - ${snacks[1]}
+echo - ${snacks[2]}
+echo - ${snacks[3]}
+
+snacks[5]="grapes" 
+
+snacks+=("apples") #parentesis needed, or else bash will apend to the first value string (like 0: yougurtapples)
+
+#all values in array:
+echo "snacks:" ${snacks[@]}
+
+for i in {0..6}; do echo "$i: ${snacks[i]}"; done
+echo
+
+#associative arrays: key-value
+declare -A person
+person[name]="Joana"
+person["age"]=22
+echo ${person[name]} is ${person["age"]} yso.
