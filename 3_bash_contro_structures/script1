@@ -1,0 +1,171 @@
+#!/usr/bin/env bash
+
+#if stament
+declare -i a=3
+
+if [[ a -gt 4 ]] #or (($a > 4))
+then 
+    echo "$a is greater than 4!"
+else
+    echo "$a is NOT greater than 4!"
+fi
+
+echo
+
+if (($a > 4))
+then 
+    echo "$a is greater than 4!"
+elif (($a > 2))
+then 
+    echo "$a is greater than 2!"
+else
+    echo "$a is NOT greater than 4!"
+fi
+
+echo
+
+if (($a > 4)); then echo "$a is greater than 4!"; else echo "$a is NOT greater than 4!"; fi
+
+echo
+
+#SELF STUDY: ternary type? if
+[[ $a -gt 4 ]] && echo "$a is greater than 4!" || echo "$a is NOT greater than 4!"
+
+echo
+
+# loop
+# while & until - oposites
+# while runs for the time the condition is TRUE
+# until runs for the time the condition is FALSE
+
+echo while
+declare -i i=0;
+while (( i<10 ))
+do
+    echo "i: $i"
+    ((i++));
+done
+echo
+
+echo until
+i=0
+until ((i==10)); do
+    echo "i: $i"
+    ((i++));
+done
+
+echo
+
+#for loops
+
+for i in 1 2 3; do
+echo -n $i,
+done
+
+echo;echo
+
+for i in {1..10}; do
+echo -n $i,
+done
+
+echo;echo
+
+for i in {1..10..2}; do
+echo -n $i,
+done
+
+echo;echo
+
+for((i=1; i<=10; i++)); do
+echo -n $i,
+done
+
+echo;echo
+
+declare -a fruits=("banana" "apples" "grapes" "pears" "watermelon")
+
+for f in ${fruits[@]}; do
+echo -n $f,
+done
+
+echo;echo
+
+declare -A person
+person["name"]="Joana"
+person["age"]=22
+person["birthyear"]=2001
+
+
+for p in "${!person[@]}"; do #! to acess keys, "" to make sure spaces in key names are not problematic
+echo -n $p: "${person[$p]}",
+done
+
+echo;echo
+
+echo ls
+for s in $(ls ..); do
+echo $s
+done
+
+echo
+
+echo ls
+for s in ../*; do
+echo $s
+done
+
+echo
+
+#case
+animal="dog"
+case $animal in
+    bird) echo "avian";; #if "dog"=="avian"
+    dog|puppy) echo "canine";; #if "dog"=="dog" OR "dog"=="puppy"
+    *) echo "no match";; #if nothing else matches (default)
+esac #finish - case backwards
+
+animal="dogg"
+case $animal in
+    bird) echo "avian";; #if "dog"=="avian"
+    dog|puppy) echo "canine";; #if "dog"=="dog" OR "dog"=="puppy"
+    *) echo "no match";; #if nothing else matches (default)
+esac #finish - case backwards
+
+echo
+
+#functions
+greet(){
+    age=$2
+    ((age+=2))
+    echo "hello, $1! In 2 years you will be $age"
+}
+
+inspect(){
+    echo "this is the function: $FUNCNAME"
+    i=1;
+    for elm in $@; do # $@ - all arguments
+        echo -n "$i: $elm, "
+        ((i++))
+    done
+}
+
+echo "and now a greeting!"
+greet Joana 22
+echo
+inspect /*
+echo; echo
+
+#local variables
+var1="var1"
+
+func_lcl(){
+var2="var2"
+local var3="var3"
+echo $var1 $var2 $var3
+}
+
+echo $var1 $var2 $var3
+
+func_lcl
+
+echo $var1 $var2 $var3
